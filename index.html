@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <input id="cityInput" placeholder="Search city" />
+  <button onclick="getWeather()">Search</button>
+  <h1 id="temp">--°</h1>
+  <h2 id="city">--</h2>
+  <p id="country">--</p>
+  <img id="flag" width="40" />
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value;
+       const apiKey = "bb7a4e9ae6f9ecb74125be8c4c137abc";
+
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Shahar topilmadi");
+        const data = await res.json();
+
+        document.getElementById("temp").textContent = `${Math.round(data.main.temp)}°`;
+        document.getElementById("city").textContent = data.name;
+
+        const countryCode = data.sys.country;
+        const countryRes = await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`);
+        const countryData = await countryRes.json();
+        document.getElementById("country").textContent = countryData[0].name.common;
+        document.getElementById("flag").src = countryData[0].flags.svg;
+
+      } catch (err) {
+        alert("❌ Xatolik: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
